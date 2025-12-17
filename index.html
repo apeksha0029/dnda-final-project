@@ -1,267 +1,271 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>IDV-assignment2 — SVG transforms</title>
-<style>
-  /* PAGE / TABLE STYLING */
-  :root{--cell-w:150px;--cell-h:150px}
-  body{font-family:system-ui,Arial; margin:24px; background:#ffffff; color:#111}
-  h1{font-size:18px; margin-bottom:6px}
-  p.small{font-size:13px; margin-top:0; color:#444}
-  table{border-collapse:collapse; width:100%; max-width:1200px}
-  th, td{border:1px solid #ddd; padding:8px; text-align:center; vertical-align:middle}
-  th{background:#f8f8f8; font-size:13px}
-  .svg-cell{width:var(--cell-w); height:var(--cell-h); display:inline-block}
-  /* ensure svg itself has white background rectangle inside, and no page background bleed */
-  .caption{font-size:12px; margin-top:6px; color:#555}
-  /* responsive */
-  @media (max-width:900px){table{font-size:12px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Screen Time & Mental Wellness | Data Story</title>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #050508;
+      --panel: rgba(25, 25, 35, 0.7);
+      --text: #ffffff;
+      --muted: #8e8ea0;
+      --pink: #ff007a;
+      --purple: #7000ff;
+      --cyan: #00f2ff;
+      --yellow: #f8ff00;
+      --glass: rgba(255, 255, 255, 0.03);
+    }
+
+    * { box-sizing: border-box; scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* --- BACKGROUND STICKERS --- */
+    .sticker {
+      position: fixed;
+      opacity: 0.1;
+      z-index: -1;
+      filter: grayscale(1);
+      pointer-events: none;
+    }
+
+    /* --- HERO --- */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 10vw;
+      background: radial-gradient(circle at 80% 20%, #1a1a2e 0%, #050508 100%);
+    }
+
+    .hero h1 {
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 800;
+      line-height: 0.9;
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      background: linear-gradient(to right, var(--pink), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* --- BIG B&W IMAGES --- */
+    .huge-image {
+      width: 100%;
+      height: 80vh;
+      object-fit: cover;
+      filter: grayscale(1) contrast(1.2);
+      margin: 4rem 0;
+      opacity: 0.7;
+    }
+
+    /* --- THE GUIDE (MAYA) --- */
+    .guide-container {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 2rem;
+    }
+
+    .maya-sticker {
+      width: 80px;
+      height: 80px;
+      border: 2px solid var(--muted);
+      border-radius: 50%;
+      padding: 5px;
+    }
+
+    .bubble {
+      background: var(--purple);
+      padding: 1rem 1.5rem;
+      border-radius: 20px 20px 20px 0;
+      font-weight: 600;
+      font-size: 0.9rem;
+      max-width: 300px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    /* --- FLOATING COMMENTS --- */
+    .floating-note {
+      position: absolute;
+      right: -5%;
+      top: 20%;
+      width: 250px;
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transform: rotate(2deg);
+      box-shadow: 10px 10px 30px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+
+    /* --- VISUALIZATION CARDS --- */
+    section { padding: 5rem 10vw; position: relative; }
+
+    .viz-card {
+      background: var(--panel);
+      border-radius: 40px;
+      padding: 4rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 50px 100px rgba(0,0,0,0.8);
+      position: relative;
+    }
+
+    .graph { width: 100%; height: 500px; }
+
+    h2 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+    .accent-bar { width: 100px; height: 8px; background: var(--cyan); margin-bottom: 3rem; }
+
+    footer {
+      text-align: center;
+      padding: 5rem;
+      border-top: 1px solid var(--glass);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 1100px) {
+      .floating-note { position: static; width: 100%; margin-top: 2rem; transform: none; }
+      section { padding: 2rem 5vw; }
+      .viz-card { padding: 2rem; }
+    }
+  </style>
 </head>
+
 <body>
-<h1>IDV-assignment2 — SVG Transform Examples</h1>
-<p class="small">Table: 10 rows (each row = one unique SVG); columns = Original | Mirrored | Rotated 180° | Vertically squeezed 50% | Grayscale.<br>
-White page background enforced. Paste this file into your repo as <code>index.html</code>.</p>
 
-<!-- Single SVG sprite with 10 distinct non-symmetric icons defined as symbols -->
-<svg style="display:none" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true">
-  <defs>
-    <!-- Each symbol uses viewBox 0 0 100 100. They are intentionally non-symmetric. -->
-    <!-- 1: star-with-tail -->
-    <symbol id="icon1" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <path d="M50 10 L61 38 L90 38 L66 56 L75 86 L50 68 L25 86 L34 56 L10 38 L39 38 Z" fill="#ff8a65"/>
-      <path d="M72 78 C78 84,92 86,96 76" stroke="#f06292" stroke-width="3" fill="none" stroke-linecap="round"/>
-    </symbol>
+  <svg class="sticker" style="top:15%; left:5%; width:100px;" viewBox="0 0 24 24"><path fill="currentColor" d="M17,19L12,17L7,19V5H17M17,3H7A2,2 0 0 0 5,5V21L12,18L19,21V5C19,3.89 18.1,3 17,3Z" /></svg>
+  <svg class="sticker" style="top:45%; right:5%; width:120px;" viewBox="0 0 24 24"><path fill="currentColor" d="M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12.5,7H11V13L16.25,16.15L17,14.92L12.5,12.19V7Z" /></svg>
+  <svg class="sticker" style="bottom:10%; left:10%; width:80px;" viewBox="0 0 24 24"><path fill="currentColor" d="M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5Z" /></svg>
 
-    <!-- 2: tilted-heart + ribbon -->
-    <symbol id="icon2" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <path d="M50 70 L26 46 A14 14 0 0 1 50 30 A14 14 0 0 1 74 46 Z" fill="#e57373" transform="rotate(-10 50 50)"/>
-      <rect x="58" y="62" width="26" height="6" rx="3" fill="#ef9a9a" transform="rotate(-10 50 50)"/>
-    </symbol>
+  <div class="hero">
+    <h1>Digital<br>Overload</h1>
+    <p style="max-width: 600px; font-size: 1.2rem; color: var(--muted);">
+      A deep dive into the invisible toll of our "Always-On" culture. 
+      Data visualization by Apeksha Gupta.
+    </p>
+  </div>
 
-    <!-- 3: camera with tilted lens -->
-    <symbol id="icon3" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <rect x="12" y="24" width="76" height="52" rx="6" fill="#90caf9" />
-      <rect x="20" y="18" width="18" height="12" rx="3" fill="#64b5f6"/>
-      <circle cx="50" cy="50" r="16" fill="#fff"/>
-      <circle cx="50" cy="50" r="11" fill="#1976d2" transform="rotate(-12 50 50)"/>
-      <rect x="68" y="36" width="10" height="6" rx="3" fill="#0d47a1" transform="skewY(-8)"/>
-    </symbol>
+  <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop" class="huge-image" alt="Tech Interaction">
 
-    <!-- 4: leaf with stem -->
-    <symbol id="icon4" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <path d="M20 70 C50 20,90 20,80 70 C60 90,40 85,20 70 Z" fill="#66bb6a"/>
-      <path d="M30 60 C50 40,68 42,78 55" stroke="#2e7d32" stroke-width="2" fill="none"/>
-      <rect x="46" y="72" width="6" height="20" rx="3" fill="#4caf50" transform="rotate(-25 49 82)"/>
-    </symbol>
-
-    <!-- 5: pencil diagonal -->
-    <symbol id="icon5" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <rect x="20" y="60" width="52" height="12" rx="3" fill="#ffcc80" transform="rotate(-30 46 66)"/>
-      <polygon points="18,64 26,56 78,12 86,20" fill="#ffa726" transform="rotate(-30 46 66)"/>
-      <rect x="76" y="10" width="10" height="14" fill="#6d4c41" transform="rotate(-30 46 66)"/>
-    </symbol>
-
-    <!-- 6: bell with clapper offset -->
-    <symbol id="icon6" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <path d="M30 30 C30 20,70 20,70 30 C70 52,78 56,78 64 L22 64 C22 56,30 52,30 30 Z" fill="#ffd54f"/>
-      <circle cx="50" cy="70" r="5" fill="#f57f17" />
-      <rect x="42" y="18" width="16" height="6" rx="3" fill="#ffb300"/>
-    </symbol>
-
-    <!-- 7: cloud with raindrops (asymmetric) -->
-    <symbol id="icon7" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <path d="M20 56 C18 44,30 36,44 40 C52 28,72 30,74 42 C90 44,86 64,70 66 L24 66 Z" fill="#b3e5fc"/>
-      <path d="M40 74 q4 6 8 0" stroke="#0288d1" stroke-width="3" stroke-linecap="round" fill="none"/>
-      <path d="M60 74 q4 6 10 0" stroke="#0288d1" stroke-width="3" stroke-linecap="round" fill="none"/>
-    </symbol>
-
-    <!-- 8: lightning + angled bolt -->
-    <symbol id="icon8" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <polygon points="48,12 36,56 56,56 34,92 76,38 52,38" fill="#ffd54f" transform="rotate(8 50 50)"/>
-      <rect x="66" y="70" width="10" height="6" rx="2" fill="#fbc02d" transform="rotate(10 71 73)"/>
-    </symbol>
-
-    <!-- 9: package box with offset tape -->
-    <symbol id="icon9" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <rect x="18" y="30" width="64" height="46" rx="4" fill="#bCAAA4"/>
-      <path d="M18 30 L50 16 L82 30" fill="#a1887f"/>
-      <rect x="44" y="28" width="12" height="60" fill="#6d4c41" transform="skewX(-6)"/>
-    </symbol>
-
-    <!-- 10: map-pin with inner offset circle -->
-    <symbol id="icon10" viewBox="0 0 100 100">
-      <rect width="100" height="100" fill="#fff"/>
-      <path d="M50 12 C34 12,24 28,24 44 C24 64,50 86,50 86 C50 86,76 64,76 44 C76 28,66 12,50 12 Z" fill="#e57373"/>
-      <circle cx="48" cy="44" r="8" fill="#fff"/>
-      <circle cx="48" cy="44" r="4" fill="#f44336" transform="translate(4,2)"/>
-    </symbol>
-
-    <!-- Grayscale filter -->
-    <filter id="grayscale">
-      <feColorMatrix type="saturate" values="0"/>
-    </filter>
-  </defs>
-</svg>
-
-<table>
-  <thead>
-    <tr>
-      <th>Original</th>
-      <th>Left-right mirrored</th>
-      <th>Rotated 180°</th>
-      <th>Vertically squeezed 50%</th>
-      <th>Grayscale</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- For each row, we place an inline svg (150x150) and <use> the symbol, applying the required transform -->
-    <!-- Row template explanation:
-         - Each <svg> has a white rect background (so page + svg remain pure white)
-         - We use viewBox 0 0 100 100
-         - mirror: translate(100,0) scale(-1,1)
-         - rotate 180: translate(100,100) rotate(180)
-         - squeeze: translate(50,50) scale(1,0.5) translate(-50,-50)
-         - grayscale: apply filter="url(#grayscale)"
-    -->
-
-    <!-- Row 1: icon1 -->
-    <tr>
-      <td>
-        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="icon1 original">
-          <use href="#icon1"></use>
+  <section>
+    <div class="guide-container">
+        <svg class="maya-sticker" viewBox="0 0 100 100">
+            <circle cx="50" cy="30" r="15" fill="none" stroke="white" stroke-width="2"/>
+            <path d="M50 45 L50 75 M50 55 L30 45 M50 55 L70 45 M50 75 L35 95 M50 75 L65 95" stroke="white" stroke-width="2"/>
         </svg>
-      </td>
-      <td>
-        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <use href="#icon1" transform="translate(100,0) scale(-1,1)"></use>
-        </svg>
-      </td>
-      <td>
-        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <use href="#icon1" transform="translate(100,100) rotate(180)"></use>
-        </svg>
-      </td>
-      <td>
-        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <use href="#icon1" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use>
-        </svg>
-      </td>
-      <td>
-        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <use href="#icon1" filter="url(#grayscale)"></use>
-        </svg>
-      </td>
-    </tr>
+        <div class="bubble">Hi! I'm Maya. I'll help you navigate what these numbers actually mean for our brains.</div>
+    </div>
 
-    <!-- Row 2: icon2 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+    <div class="viz-card">
+      <div class="floating-note">
+        <b>Insight:</b> Notice how "Laptop Work" dwarfs everything else. We aren't just using screens; we are living in them.
+      </div>
+      <h2>The Daily Split</h2>
+      <div class="accent-bar"></div>
+      <div id="g1" class="graph"></div>
+    </div>
+  </section>
 
-    <!-- Row 3: icon3 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+  <section>
+    <div class="viz-card">
+      <div class="floating-note" style="top: 60%; right: -2%;">
+        <b>The Breaking Point:</b> Stress doesn't rise linearly. After 6 hours, it spikes exponentially.
+      </div>
+      <h2>Stress Thresholds</h2>
+      <div class="accent-bar" style="background: var(--pink);"></div>
+      <div id="g2" class="graph"></div>
+    </div>
+  </section>
 
-    <!-- Row 4: icon4 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+  <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=2070&auto=format&fit=crop" class="huge-image" alt="Night Screen Use">
 
-    <!-- Row 5: icon5 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+  <section>
+    <div class="viz-card">
+      <h2>The Sleep Debt</h2>
+      <div class="accent-bar" style="background: var(--yellow);"></div>
+      <div id="g3" class="graph"></div>
+      <div class="guide-container" style="margin-top:2rem;">
+        <div class="bubble" style="border-radius: 20px 20px 0 20px;">High users lose nearly 4 hours of quality restorative sleep compared to low users.</div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Row 6: icon6 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+  <section>
+    <div class="viz-card">
+      <h2>Hidden Links</h2>
+      <div class="accent-bar" style="background: var(--purple);"></div>
+      <div id="g4" class="graph"></div>
+    </div>
+  </section>
 
-    <!-- Row 7: icon7 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+  <footer>
+    Apeksha Gupta &copy; 2025 · MSc Human-Centred Design · Information Visualization
+  </footer>
 
-    <!-- Row 8: icon8 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+  <script>
+    const commonLayout = {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { color: '#ffffff', family: 'Inter' },
+      margin: { t: 20, b: 40, l: 40, r: 20 },
+      xaxis: { gridcolor: 'rgba(255,255,255,0.05)', zeroline: false },
+      yaxis: { gridcolor: 'rgba(255,255,255,0.05)', zeroline: false }
+    };
 
-    <!-- Row 9: icon9 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+    // Graph 1: Vibrant Stacked Bar
+    Plotly.newPlot('g1', [
+      { x: ['Mobile','Laptop','TV'], y: [2.1,4.8,0.6], type:'bar', name:'Work', marker:{color: '#7000ff'} },
+      { x: ['Mobile','Laptop','TV'], y: [1.4,1.4,0.5], type:'bar', name:'Leisure', marker:{color: '#00f2ff'} }
+    ], { ...commonLayout, barmode:'stack' });
 
-    <!-- Row 10: icon10 -->
-    <tr>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" transform="translate(100,0) scale(-1,1)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" transform="translate(100,100) rotate(180)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
-      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" filter="url(#grayscale)"></use></svg></td>
-    </tr>
+    // Graph 2: Neon Line
+    Plotly.newPlot('g2', [{
+      x:[2,3,4,5,6,7,8,9], y:[3,4,5,6,6.5,7.2,8.1,9], 
+      mode:'lines+markers',
+      line: { color: '#ff007a', width: 4 },
+      marker: { size: 10, color: '#ffffff' }
+    }], commonLayout);
 
-  </tbody>
-</table>
+    // Graph 3: Box Plot
+    Plotly.newPlot('g3', [
+      { y:[8,8.2,8.4,7.9], type:'box', name:'Low Use', marker:{color:'#00f2ff'} },
+      { y:[6.2,6.5,6.7], type:'box', name:'Moderate', marker:{color:'#7000ff'} },
+      { y:[4,4.2,4.5], type:'box', name:'High Use', marker:{color:'#ff007a'} }
+    ], commonLayout);
 
-<hr style="margin-top:18px"/>
-
-<!-- Quick steps below to get you done in 20 minutes -->
-<h2 style="font-size:15px; margin-bottom:6px">20-minute quick plan (follow these exact steps)</h2>
-<ol>
-  <li>Open your repo: `IDV-assignment2` on GitHub (or create it if missing) and make sure repository name is exactly <code>IDV-assignment2</code>.</li>
-  <li>Create a file named <code>index.html</code> in the repo root. Paste this entire file content into it and commit/push.</li>
-  <li>Enable GitHub Pages: Repo → Settings → Pages (or "Pages" in new UI) → Branch: <code>main</code> (or <code>master</code>) and root → Save. GitHub will show the site URL: <code>https://&lt;username&gt;.github.io/IDV-assignment2</code>.</li>
-  <li>Wait ~a minute for Pages to publish, then open the generated URL to confirm the table renders. (Pages may take a short moment.)</li>
-  <li>If something looks off, confirm: you committed <code>index.html</code> into the repository root, not a subfolder.</li>
-</ol>
-
-<p style="color:#a00; font-size:13px">Notes: Do NOT change background color — the white rectangles inside each SVG ensure pure white backgrounds. The file embeds 10 different simple SVGs so you don’t need external files.</p>
+    // Graph 4: Heatmap
+    Plotly.newPlot('g4', [{
+      z:[[1,0.78,-0.65,0.55,-0.48],[0.78,1,-0.72,0.36,-0.33],[-0.65,-0.72,1,-0.51,0.42],[0.55,0.36,-0.51,1,0.61],[-0.48,-0.33,0.42,0.61,1]],
+      x:['Screen','Stress','Sleep','Mood','Prod'],
+      y:['Screen','Stress','Sleep','Mood','Prod'],
+      type:'heatmap',
+      colorscale: [
+          [0, '#ff007a'],
+          [0.5, '#050508'],
+          [1, '#00f2ff']
+      ]
+    }], commonLayout);
+  </script>
 
 </body>
-</html>
+</html> I want to see preview for this code
