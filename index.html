@@ -1,295 +1,267 @@
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Screen Time & Mental Wellness</title>
-
-  <!-- Plotly -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg: #0b0e14;
-      --card: #141826;
-      --text: #e6e8ee;
-      --muted: #9aa0b3;
-      --accent: #6cf2c2;
-      --danger: #ff6b6b;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: radial-gradient(1200px 600px at 20% -10%, #1b2140 0%, transparent 60%), var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    header {
-      min-height: 90vh;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 3rem;
-      padding: 4rem 6vw;
-      align-items: center;
-    }
-
-    header h1 {
-      font-size: clamp(2.5rem, 4vw, 4rem);
-      line-height: 1.1;
-      margin-bottom: 1rem;
-    }
-
-    header p {
-      color: var(--muted);
-      max-width: 520px;
-      font-size: 1.05rem;
-    }
-
-    .hero-img {
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    }
-
-    .section {
-      padding: 5rem 6vw;
-    }
-
-    .section h2 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .section p {
-      max-width: 720px;
-      color: var(--muted);
-    }
-
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent), var(--card);
-      border-radius: 20px;
-      padding: 2rem;
-      margin-top: 2rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-    }
-
-    .graph {
-      width: 100%;
-      height: 420px;
-    }
-
-    /* Mascot */
-    .mascot {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 120px;
-      cursor: pointer;
-      z-index: 1000;
-      transition: transform 0.3s ease;
-    }
-
-    .mascot:hover { transform: scale(1.05); }
-
-    .speech {
-      position: fixed;
-      bottom: 160px;
-      right: 24px;
-      max-width: 260px;
-      background: var(--card);
-      border-radius: 16px;
-      padding: 1rem 1.2rem;
-      font-size: 0.9rem;
-      color: var(--text);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      display: none;
-    }
-
-    .speech strong { color: var(--accent); }
-
-    footer {
-      padding: 3rem 6vw;
-      text-align: center;
-      color: var(--muted);
-      border-top: 1px solid rgba(255,255,255,0.05);
-    }
-
-    @media (max-width: 900px) {
-      header { grid-template-columns: 1fr; }
-      .mascot, .speech { right: 16px; }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>IDV-assignment2 — SVG transforms</title>
+<style>
+  /* PAGE / TABLE STYLING */
+  :root{--cell-w:150px;--cell-h:150px}
+  body{font-family:system-ui,Arial; margin:24px; background:#ffffff; color:#111}
+  h1{font-size:18px; margin-bottom:6px}
+  p.small{font-size:13px; margin-top:0; color:#444}
+  table{border-collapse:collapse; width:100%; max-width:1200px}
+  th, td{border:1px solid #ddd; padding:8px; text-align:center; vertical-align:middle}
+  th{background:#f8f8f8; font-size:13px}
+  .svg-cell{width:var(--cell-w); height:var(--cell-h); display:inline-block}
+  /* ensure svg itself has white background rectangle inside, and no page background bleed */
+  .caption{font-size:12px; margin-top:6px; color:#555}
+  /* responsive */
+  @media (max-width:900px){table{font-size:12px}}
+</style>
 </head>
-
 <body>
+<h1>IDV-assignment2 — SVG Transform Examples</h1>
+<p class="small">Table: 10 rows (each row = one unique SVG); columns = Original | Mirrored | Rotated 180° | Vertically squeezed 50% | Grayscale.<br>
+White page background enforced. Paste this file into your repo as <code>index.html</code>.</p>
 
-<header>
-  <div>
-    <h1>Screen Time & Mental Wellness</h1>
-    <p>
-      An exploratory data visualization project (2025) examining how modern screen habits
-      shape stress, sleep, mood, and productivity across age groups.
-    </p>
-  </div>
+<!-- Single SVG sprite with 10 distinct non-symmetric icons defined as symbols -->
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg" width="0" height="0" aria-hidden="true">
+  <defs>
+    <!-- Each symbol uses viewBox 0 0 100 100. They are intentionally non-symmetric. -->
+    <!-- 1: star-with-tail -->
+    <symbol id="icon1" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M50 10 L61 38 L90 38 L66 56 L75 86 L50 68 L25 86 L34 56 L10 38 L39 38 Z" fill="#ff8a65"/>
+      <path d="M72 78 C78 84,92 86,96 76" stroke="#f06292" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </symbol>
 
-  <img class="hero-img" src="https://images.unsplash.com/photo-1519389950473-47ba0277781c" alt="Digital life and screens" />
-</header>
+    <!-- 2: tilted-heart + ribbon -->
+    <symbol id="icon2" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M50 70 L26 46 A14 14 0 0 1 50 30 A14 14 0 0 1 74 46 Z" fill="#e57373" transform="rotate(-10 50 50)"/>
+      <rect x="58" y="62" width="26" height="6" rx="3" fill="#ef9a9a" transform="rotate(-10 50 50)"/>
+    </symbol>
 
-<section class="section">
-  <h2>Why This Matters</h2>
-  <p>
-    Using data from 400 participants aged 16–55, this project investigates how screen exposure
-    across devices influences mental wellness indicators. The goal is not to demonize screens,
-    but to reveal patterns that designers, educators, and policymakers can act upon.
-  </p>
-</section>
+    <!-- 3: camera with tilted lens -->
+    <symbol id="icon3" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <rect x="12" y="24" width="76" height="52" rx="6" fill="#90caf9" />
+      <rect x="20" y="18" width="18" height="12" rx="3" fill="#64b5f6"/>
+      <circle cx="50" cy="50" r="16" fill="#fff"/>
+      <circle cx="50" cy="50" r="11" fill="#1976d2" transform="rotate(-12 50 50)"/>
+      <rect x="68" y="36" width="10" height="6" rx="3" fill="#0d47a1" transform="skewY(-8)"/>
+    </symbol>
 
-<section class="section">
-  <div class="card">
-    <h2>Average Screen Time by Device</h2>
-    <p>Laptop usage dominates daily screen exposure, indicating work‑driven digital fatigue.</p>
-    <div id="graph1" class="graph"></div>
-  </div>
-</section>
+    <!-- 4: leaf with stem -->
+    <symbol id="icon4" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M20 70 C50 20,90 20,80 70 C60 90,40 85,20 70 Z" fill="#66bb6a"/>
+      <path d="M30 60 C50 40,68 42,78 55" stroke="#2e7d32" stroke-width="2" fill="none"/>
+      <rect x="46" y="72" width="6" height="20" rx="3" fill="#4caf50" transform="rotate(-25 49 82)"/>
+    </symbol>
 
-<section class="section">
-  <div class="card">
-    <h2>Screen Time vs Stress</h2>
-    <p>Stress levels rise steadily with increased total screen time, peaking around 6–8 hours.</p>
-    <div id="graph2" class="graph"></div>
-  </div>
-</section>
+    <!-- 5: pencil diagonal -->
+    <symbol id="icon5" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <rect x="20" y="60" width="52" height="12" rx="3" fill="#ffcc80" transform="rotate(-30 46 66)"/>
+      <polygon points="18,64 26,56 78,12 86,20" fill="#ffa726" transform="rotate(-30 46 66)"/>
+      <rect x="76" y="10" width="10" height="14" fill="#6d4c41" transform="rotate(-30 46 66)"/>
+    </symbol>
 
-<section class="section">
-  <div class="card">
-    <h2>Sleep Quality Across User Groups</h2>
-    <p>Heavy screen users experience significantly poorer sleep quality.</p>
-    <div id="graph3" class="graph"></div>
-  </div>
-</section>
+    <!-- 6: bell with clapper offset -->
+    <symbol id="icon6" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M30 30 C30 20,70 20,70 30 C70 52,78 56,78 64 L22 64 C22 56,30 52,30 30 Z" fill="#ffd54f"/>
+      <circle cx="50" cy="70" r="5" fill="#f57f17" />
+      <rect x="42" y="18" width="16" height="6" rx="3" fill="#ffb300"/>
+    </symbol>
 
-<section class="section">
-  <div class="card">
-    <h2>Correlation Heatmap</h2>
-    <p>Screen time indirectly impacts mood and productivity through stress and sleep disruption.</p>
-    <div id="graph4" class="graph"></div>
-  </div>
-</section>
+    <!-- 7: cloud with raindrops (asymmetric) -->
+    <symbol id="icon7" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M20 56 C18 44,30 36,44 40 C52 28,72 30,74 42 C90 44,86 64,70 66 L24 66 Z" fill="#b3e5fc"/>
+      <path d="M40 74 q4 6 8 0" stroke="#0288d1" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M60 74 q4 6 10 0" stroke="#0288d1" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </symbol>
 
-<footer>
-  Final Project · Human‑Centred Design · 2025
-</footer>
+    <!-- 8: lightning + angled bolt -->
+    <symbol id="icon8" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <polygon points="48,12 36,56 56,56 34,92 76,38 52,38" fill="#ffd54f" transform="rotate(8 50 50)"/>
+      <rect x="66" y="70" width="10" height="6" rx="2" fill="#fbc02d" transform="rotate(10 71 73)"/>
+    </symbol>
 
-<!-- Mascot & Speech -->
-<img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" class="mascot" id="mascot" alt="AI mascot" />
-<div class="speech" id="speech"></div>
+    <!-- 9: package box with offset tape -->
+    <symbol id="icon9" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <rect x="18" y="30" width="64" height="46" rx="4" fill="#bCAAA4"/>
+      <path d="M18 30 L50 16 L82 30" fill="#a1887f"/>
+      <rect x="44" y="28" width="12" height="60" fill="#6d4c41" transform="skewX(-6)"/>
+    </symbol>
 
-<script>
-  /* Mascot logic */
-  const messages = [
-    "👋 Hi! I'm <strong>Nova</strong>. Scroll down — the data gets interesting.",
-    "💻 Notice how laptops dominate screen time? Work culture matters.",
-    "⚠️ That stress spike at 6–8 hours? That's your burnout zone.",
-    "😴 Poor sleep is the silent cost of heavy screen usage.",
-    "📊 Correlations reveal what habits quietly shape mental health."
-  ];
-  let index = 0;
-  const speech = document.getElementById('speech');
-  document.getElementById('mascot').onclick = () => {
-    speech.style.display = 'block';
-    speech.innerHTML = messages[index % messages.length];
-    index++;
-  };
+    <!-- 10: map-pin with inner offset circle -->
+    <symbol id="icon10" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#fff"/>
+      <path d="M50 12 C34 12,24 28,24 44 C24 64,50 86,50 86 C50 86,76 64,76 44 C76 28,66 12,50 12 Z" fill="#e57373"/>
+      <circle cx="48" cy="44" r="8" fill="#fff"/>
+      <circle cx="48" cy="44" r="4" fill="#f44336" transform="translate(4,2)"/>
+    </symbol>
 
-  /* Graphs */
-  Plotly.newPlot("graph1", [
-    {
-      x: ["Mobile", "Laptop", "TV"],
-      y: [2.1, 4.8, 0.6],
-      name: "Work / Study",
-      type: "bar"
-    },
-    {
-      x: ["Mobile", "Laptop", "TV"],
-      y: [1.4, 1.4, 0.5],
-      name: "Leisure",
-      type: "bar"
-    }
-  ], {
-    barmode: "stack",
-    title: "Screen Time Composition by Device",
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: '#e6e8ee' }
-  });
+    <!-- Grayscale filter -->
+    <filter id="grayscale">
+      <feColorMatrix type="saturate" values="0"/>
+    </filter>
+  </defs>
+</svg>
 
-  Plotly.newPlot("graph2", [
-    {
-      x: [2,3,4,5,6,7,8,9],
-      y: [3,4,5,6,6.5,7.2,8.1,9],
-      mode: "markers+lines",
-      name: "Observed Stress",
-      type: "scatter"
-    },
-    {
-      x: [6, 8],
-      y: [6.8, 6.8],
-      mode: "lines",
-      name: "Burnout Threshold",
-      line: { dash: "dash" }
-    }
-  ], {
-    title: "Rising Stress with Screen Exposure",
-    xaxis: { title: "Total Screen Time (hrs/day)" },
-    yaxis: { title: "Stress Score" },
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: '#e6e8ee' }
-  });
+<table>
+  <thead>
+    <tr>
+      <th>Original</th>
+      <th>Left-right mirrored</th>
+      <th>Rotated 180°</th>
+      <th>Vertically squeezed 50%</th>
+      <th>Grayscale</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- For each row, we place an inline svg (150x150) and <use> the symbol, applying the required transform -->
+    <!-- Row template explanation:
+         - Each <svg> has a white rect background (so page + svg remain pure white)
+         - We use viewBox 0 0 100 100
+         - mirror: translate(100,0) scale(-1,1)
+         - rotate 180: translate(100,100) rotate(180)
+         - squeeze: translate(50,50) scale(1,0.5) translate(-50,-50)
+         - grayscale: apply filter="url(#grayscale)"
+    -->
 
-  Plotly.newPlot("graph3", [
-    {
-      y: [7.8,8.1,8.4,8.0,8.2],
-      name: "Low Users",
-      type: "box"
-    },
-    {
-      y: [6.2,6.5,6.7,6.4,6.6],
-      name: "Moderate Users",
-      type: "box"
-    },
-    {
-      y: [3.9,4.1,4.5,4.2,4.0],
-      name: "High Users",
-      type: "box"
-    }
-  ], {
-    title: "Sleep Quality Distribution",
-    yaxis: { title: "Sleep Quality Score" },
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: '#e6e8ee' }
-  });
+    <!-- Row 1: icon1 -->
+    <tr>
+      <td>
+        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="icon1 original">
+          <use href="#icon1"></use>
+        </svg>
+      </td>
+      <td>
+        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <use href="#icon1" transform="translate(100,0) scale(-1,1)"></use>
+        </svg>
+      </td>
+      <td>
+        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <use href="#icon1" transform="translate(100,100) rotate(180)"></use>
+        </svg>
+      </td>
+      <td>
+        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <use href="#icon1" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use>
+        </svg>
+      </td>
+      <td>
+        <svg class="svg-cell" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <use href="#icon1" filter="url(#grayscale)"></use>
+        </svg>
+      </td>
+    </tr>
 
-  Plotly.newPlot("graph4", [{
-    z: [
-      [1, 0.78, -0.65, 0.55, -0.48],
-      [0.78, 1, -0.72, 0.36, -0.33],
-      [-0.65, -0.72, 1, -0.51, 0.42],
-      [0.55, 0.36, -0.51, 1, 0.61],
-      [-0.48, -0.33, 0.42, 0.61, 1]
-    ],
-    x: ["ScreenTime", "Stress", "Sleep", "Mood", "Productivity"],
-    y: ["ScreenTime", "Stress", "Sleep", "Mood", "Productivity"],
-    type: "heatmap"
-  }], { paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', font: { color: '#e6e8ee' }});
-</script>
+    <!-- Row 2: icon2 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon2" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 3: icon3 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon3" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 4: icon4 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon4" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 5: icon5 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon5" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 6: icon6 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon6" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 7: icon7 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon7" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 8: icon8 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon8" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 9: icon9 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon9" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+    <!-- Row 10: icon10 -->
+    <tr>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" transform="translate(100,0) scale(-1,1)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" transform="translate(100,100) rotate(180)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" transform="translate(50,50) scale(1,0.5) translate(-50,-50)"></use></svg></td>
+      <td><svg class="svg-cell" viewBox="0 0 100 100"><use href="#icon10" filter="url(#grayscale)"></use></svg></td>
+    </tr>
+
+  </tbody>
+</table>
+
+<hr style="margin-top:18px"/>
+
+<!-- Quick steps below to get you done in 20 minutes -->
+<h2 style="font-size:15px; margin-bottom:6px">20-minute quick plan (follow these exact steps)</h2>
+<ol>
+  <li>Open your repo: `IDV-assignment2` on GitHub (or create it if missing) and make sure repository name is exactly <code>IDV-assignment2</code>.</li>
+  <li>Create a file named <code>index.html</code> in the repo root. Paste this entire file content into it and commit/push.</li>
+  <li>Enable GitHub Pages: Repo → Settings → Pages (or "Pages" in new UI) → Branch: <code>main</code> (or <code>master</code>) and root → Save. GitHub will show the site URL: <code>https://&lt;username&gt;.github.io/IDV-assignment2</code>.</li>
+  <li>Wait ~a minute for Pages to publish, then open the generated URL to confirm the table renders. (Pages may take a short moment.)</li>
+  <li>If something looks off, confirm: you committed <code>index.html</code> into the repository root, not a subfolder.</li>
+</ol>
+
+<p style="color:#a00; font-size:13px">Notes: Do NOT change background color — the white rectangles inside each SVG ensure pure white backgrounds. The file embeds 10 different simple SVGs so you don’t need external files.</p>
 
 </body>
 </html>
